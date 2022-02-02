@@ -1,0 +1,15 @@
+@using HtmlHelpers.BeginCollectionItemCore;
+@model TinyBallot.Models.Candidate
+
+<div class="candidate">
+@using (Html.BeginCollectionItem("Candidates"))
+{
+    <div class="input-group">
+        <input asp-for="Label" class="form-control" placeholder="@nameof(Model.Label)"/>
+        <button class="btn btn-outline-danger" data-action="removeCandidate">
+            <i class="bi bi-trash-fill"></i>
+        </button>
+    </div>
+    <span asp-validation-for="Label" class="text-danger"></span>
+}
+</div>
