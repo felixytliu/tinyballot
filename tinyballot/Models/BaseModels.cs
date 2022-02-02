@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace TinyBallot.Models;
@@ -23,7 +24,7 @@ public class Ballot
 
     [Required]
     public string Voter { get; set; } = string.Empty;
-    public ICollection<Candidate>? Candidates { get; set; }
+    public IList<BallotCandidate>? BallotCandidates { get; set; }
 }
 
 public class Candidate
@@ -31,8 +32,17 @@ public class Candidate
     public int CandidateId { get; set; }
     [Required]
     public Poll? Poll { get; set; }
-    public ICollection<Ballot>? Ballots { get; set; }
+    public IList<BallotCandidate>? BallotCandidates { get; set; }
     
     [Required]
     public virtual string Label { get; set; } = string.Empty;
+}
+
+public class BallotCandidate
+{
+    public int BallotId { get; set; }
+    public Ballot? Ballot { get; set; }
+    
+    public int CandidateId { get; set; }
+    public Candidate? Candidate { get; set; }
 }
