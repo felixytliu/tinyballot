@@ -1,4 +1,10 @@
+using Microsoft.EntityFrameworkCore;
+using TinyBallot.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<SimplePollContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SimplePollContext")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
