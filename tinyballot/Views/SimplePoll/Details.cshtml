@@ -1,30 +1,64 @@
 @model TinyBallot.Models.Poll
 
+@using System.Linq;
+
 @{
-    ViewData["Title"] = "Details";
+ViewData["Title"] = "Details";
+}
+
+@section Styles {
+<style type="text/css">
+  th, td { text-align: center; }
+</style>
 }
 
 <h1>Details</h1>
 
+<h4>Poll</h4>
+<hr />
+
+<dl class="row">
+  <dt class = "col-sm-2">
+    @Html.DisplayNameFor(model => model.Name)
+  </dt>
+  <dd class = "col-sm-10">
+    @Html.DisplayFor(model => model.Name)
+  </dd>
+  <dt class = "col-sm-2">
+    @Html.DisplayNameFor(model => model.Description)
+  </dt>
+  <dd class = "col-sm-10">
+    @Html.DisplayFor(model => model.Description)
+  </dd>
+  <dt class = "col-sm-2">
+    @Html.DisplayNameFor(model => model.Ballots)
+  </dt>
+  <dd class = "col-sm-10">
+    <table class="table table-striped">
+      <tr>
+	<th></th>
+	@foreach (var c in Model.Candidates)
+        {
+	<th>@Html.DisplayFor(model => c.Label)</th>
+	}
+      </tr>
+      @foreach (var b in Model.Ballots)
+      {
+      <tr>
+	<td>@Html.DisplayFor(model => b.Voter)</td>
+	@foreach (var c in Model.Candidates)
+	{
+	<td><i class="bi @(b.BallotCandidates.Any(bc => (bc.Candidate == c)) ?
+"bi-check-square-fill text-success" :
+"bi-x-square-fill text-danger")"></i></td>
+	}
+      </tr>
+      }
+    </table>
+  </dd>
+</dl>
+
 <div>
-    <h4>Poll</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.PollId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+  <a asp-action="Edit" asp-route-id="@Model?.PollId">Edit</a> |
+  <a asp-action="Index">Back to List</a>
 </div>
