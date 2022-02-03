@@ -1,17 +1,21 @@
+using System.ComponentModel.DataAnnotations;
+using TinyBallot.Validation;
+
 namespace TinyBallot.Models;
 
-public class PollViewDTO
+public class PollEditDTO
 {
     public int PollId { get; set; }
 
-    public string? Name { get; set; }
-    public string? Description { get; set; }
-    
+    [Required]
+    public string Name { get; set; } = string.Empty;
+    [DisplayFormat(ConvertEmptyStringToNull = false)]
+    public string Description { get; set; } = string.Empty;
+
+    [NotNullOrEmptyCollection]
     public ICollection<Candidate>? Candidates { get; set; }
 
-    public PollViewDTO() { }
-    public PollViewDTO(Poll p) =>
-	(PollId, Name, Description, Candidates) = (p.PollId, p.Name, p.Description, p.Candidates);
+    public PollEditDTO() { Candidates = new List<Candidate>(); }
 }
 
 public class PollOverviewDTO

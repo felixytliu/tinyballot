@@ -54,10 +54,9 @@ namespace tinyballot.Controllers
         // GET: SimplePoll/Create
         public IActionResult Create()
         {
-	    var poll = new Poll();
-	    poll.Candidates = new List<Candidate>();
+	    var pollDTO = new PollEditDTO();
 	    
-            return View(poll);
+            return View(pollDTO);
         }
 
         // POST: SimplePoll/Create
@@ -65,15 +64,22 @@ namespace tinyballot.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PollId,Name,Description,Candidates")] Poll poll)
+        public async Task<IActionResult> Create([Bind("PollId,Name,Description,Candidates")] PollEditDTO pollDTO)
         {
             if (ModelState.IsValid)
             {
+		Poll poll = new Poll
+		{
+		    PollId = pollDTO.PollId,
+		    Name = pollDTO.Name,
+		    Description = pollDTO.Description,
+		    Candidates = pollDTO.Candidates
+		};
                 _context.Add(poll);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(poll);
+            return View(pollDTO);
         }
 
 	public IActionResult AddCandidate()
