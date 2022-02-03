@@ -14,8 +14,8 @@ public class Poll
     public string Description { get; set; } = string.Empty;
 
     [NotNullOrEmptyCollection]
-    public List<Candidate> Candidates { get; set; }
-    public List<Ballot> Ballots { get; set; }
+    public ICollection<Candidate> Candidates { get; set; }
+    public ICollection<Ballot> Ballots { get; set; }
 
     public Poll()
     {
@@ -29,10 +29,11 @@ public class Ballot
     public int BallotId { get; set; }
     [Required]
     public int PollId { get; set; }
+    public Poll? Poll { get; set; }
 
     [Required]
     public string Voter { get; set; } = string.Empty;
-    public IList<BallotCandidate> BallotCandidates { get; set; }
+    public ICollection<BallotCandidate> BallotCandidates { get; set; }
 
     public Ballot()
     {
@@ -45,7 +46,9 @@ public class Candidate
     public int CandidateId { get; set; }
     [Required]
     public int PollId { get; set; }
-    public IList<BallotCandidate>? BallotCandidates { get; set; }
+    public Poll? Poll { get; set; }
+    
+    public ICollection<BallotCandidate>? BallotCandidates { get; set; }
     
     [Required]
     public virtual string Label { get; set; } = string.Empty;
