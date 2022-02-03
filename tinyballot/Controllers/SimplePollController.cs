@@ -27,6 +27,7 @@ namespace tinyballot.Controllers
 	    var polls = await _context.Polls
 		.Include(p => p.Candidates)
 		.Include(p => p.Ballots)
+		.Select(p => new PollOverviewDTO(p))
 		.ToListAsync();
 	    
             return View(polls);

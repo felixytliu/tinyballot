@@ -1,4 +1,4 @@
-@model IEnumerable<TinyBallot.Models.Poll>
+@model IEnumerable<TinyBallot.Models.PollOverviewDTO>
 
 @{
     ViewData["Title"] = "Index";
@@ -37,10 +37,10 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
 	    <td>
-	        @Html.DisplayFor(modelItem => item.Candidates.Count)
+	        @Html.DisplayFor(modelItem => item.Candidates)
 	    </td>
 	    <td>
-	        @Html.DisplayFor(modelItem => item.Ballots.Count)
+	        @Html.DisplayFor(modelItem => item.Ballots)
 	    </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.PollId">Edit</a> |
