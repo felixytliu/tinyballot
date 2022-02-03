@@ -24,7 +24,12 @@ namespace tinyballot.Controllers
         // GET: SimplePoll
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Polls.ToListAsync());
+	    var polls = await _context.Polls
+		.Include(p => p.Candidates)
+		.Include(p => p.Ballots)
+		.ToListAsync();
+	    
+            return View(polls);
         }
 
         // GET: SimplePoll/Details/5

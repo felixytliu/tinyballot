@@ -18,6 +18,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
+	    <th>
+	        @Html.DisplayNameFor(model => model.Candidates)
+	    </th>
+	    <th>
+	        @Html.DisplayNameFor(model => model.Ballots)
+	    </th>
             <th></th>
         </tr>
     </thead>
@@ -30,6 +36,12 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
+	    <td>
+	        @Html.DisplayFor(modelItem => item.Candidates.Count)
+	    </td>
+	    <td>
+	        @Html.DisplayFor(modelItem => item.Ballots.Count)
+	    </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.PollId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.PollId">Details</a> |
