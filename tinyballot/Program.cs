@@ -4,7 +4,8 @@ using TinyBallot.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<SimplePollContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SimplePollContext")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SimplePollContext"),
+	 o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
