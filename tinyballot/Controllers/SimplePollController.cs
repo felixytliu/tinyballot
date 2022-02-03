@@ -42,7 +42,12 @@ namespace tinyballot.Controllers
             }
 
             var poll = await _context.Polls
+		.Include(p => p.Candidates)
+		.Include(p => p.Ballots)
+		.ThenInclude(b => b.BallotCandidates)
+		.AsSingleQuery()
                 .FirstOrDefaultAsync(m => m.PollId == id);
+	    
             if (poll == null)
             {
                 return NotFound();
