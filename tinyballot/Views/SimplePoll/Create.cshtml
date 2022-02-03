@@ -27,7 +27,7 @@
                 <div class="row gy-2" id="candidates">
                     @foreach (var candidate in Model.Candidates)
                     {
-                        @Html.PartialAsync("CandidateRow", candidate)
+                        @await Html.PartialAsync("CandidateRow", candidate)
                     }
                 </div>
                 <a href="javascript:void(0);" id="addCandidate">Add Candidate</a>
