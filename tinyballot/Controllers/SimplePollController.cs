@@ -24,12 +24,12 @@ namespace tinyballot.Controllers
         // GET: SimplePoll
         public async Task<IActionResult> Index()
         {
-	    var polls = await _context.Polls
-		.Include(p => p.Candidates)
-		.Include(p => p.Ballots)
-		.Select(p => new PollBriefDTO(p))
-		.ToListAsync();
-	    
+            var polls = await _context.Polls
+                .Include(p => p.Candidates)
+                .Include(p => p.Ballots)
+                .Select(p => new PollBriefDTO(p))
+                .ToListAsync();
+            
             return View(polls);
         }
 
@@ -42,12 +42,12 @@ namespace tinyballot.Controllers
             }
 
             var poll = await _context.Polls
-		.Include(p => p.Candidates)
-		.Include(p => p.Ballots)
-		.ThenInclude(b => b.BallotCandidates)
-		.AsSingleQuery()
-                .FirstOrDefaultAsync(m => m.PollId == id);
-	    
+                .Include(p => p.Candidates)
+                .Include(p => p.Ballots)
+                .ThenInclude(b => b.BallotCandidates)
+                .AsSingleQuery()
+                .FirstOrDefaultAsync(p => p.PollId == id);
+            
             if (poll == null)
             {
                 return NotFound();
@@ -59,8 +59,8 @@ namespace tinyballot.Controllers
         // GET: SimplePoll/Create
         public IActionResult Create()
         {
-	    var pollDTO = new PollDTO();
-	    
+            var pollDTO = new PollDTO();
+            
             return View(pollDTO);
         }
 
@@ -73,13 +73,13 @@ namespace tinyballot.Controllers
         {
             if (ModelState.IsValid)
             {
-		Poll poll = new Poll
-		{
-		    PollId = pollDTO.PollId,
-		    Name = pollDTO.Name,
-		    Description = pollDTO.Description,
-		    Candidates = pollDTO.Candidates
-		};
+                Poll poll = new Poll
+                {
+                    PollId = pollDTO.PollId,
+                    Name = pollDTO.Name,
+                    Description = pollDTO.Description,
+                    Candidates = pollDTO.Candidates
+                };
                 _context.Add(poll);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
