@@ -87,11 +87,99 @@ namespace tinyballot.Controllers
             return View(pollDTO);
         }
 
-	public IActionResult AddCandidate()
-	{
-	    return PartialView("CandidateRow", new Candidate());
-	}
-	
+        // GET: SimplePoll/Vote/5
+        public async Task<IActionResult> Vote(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var poll = await _context.Polls
+                .Include(p => p.Candidates)
+                .AsSingleQuery()
+                .FirstOrDefaultAsync(p => p.PollId == id);
+
+            if (poll == null)
+            {
+                return NotFound();
+            }
+
+            var ballot = new BallotDTO(poll);
+            
+            return View(ballot);
+        }
+
+        // POST: SimplePoll/Vote/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Vote(int? id, [Bind("BallotId,PollId,Candidates,Voter")] BallotDTO ballotDTO)
+        {
+            if (id != ballotDTO.PollId)
+            {
+                return NotFound();
+            }
+
+            var poll = await _context.Polls
+                .Include(p => p.Ballots)
+                .AsSingleQuery()
+                .FirstOrDefaultAsync(p => p.PollId == id);
+
+            if (poll == null)
+            {
+                return NotFound();
+            }
+
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var ballot = new Ballot()
+                    {
+                        BallotId = ballotDTO.BallotId,
+                        PollId = ballotDTO.PollId,
+                        Voter = ballotDTO.Voter,
+                        BallotCandidates = (from c in ballotDTO.Candidates
+                            select new BallotCandidate()
+                                {
+                                    BallotId = ballotDTO.BallotId,
+                                    CandidateId = c
+                                }
+                        ).ToList()
+                    };
+
+                    poll.Ballots.Add(ballot);
+                    _context.Update(poll);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!PollExists(poll.PollId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            
+            poll = await _context.Polls
+                .Include(p => p.Candidates)
+                .AsSingleQuery()
+                .FirstOrDefaultAsync(p => p.PollId == id);
+            ballotDTO.Poll = poll;
+            return View(ballotDTO);
+        }
+
+        public IActionResult AddCandidate()
+        {
+            return PartialView("CandidateRow", new Candidate());
+        }
+        
         // GET: SimplePoll/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
