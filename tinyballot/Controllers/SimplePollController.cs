@@ -254,7 +254,12 @@ namespace tinyballot.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var poll = await _context.Polls.FindAsync(id);
+            var poll = await _context.Polls
+                .Include(p => p.Candidates)
+                .Include(p => p.Ballots)
+                .ThenInclude(b => b.BallotCandidates)
+                .AsSingleQuery()
+                .FirstOrDefaultAsync(p => p.PollId == id);
             _context.Polls.Remove(poll);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
