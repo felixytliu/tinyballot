@@ -188,12 +188,15 @@ namespace tinyballot.Controllers
                 return NotFound();
             }
 
-            var poll = await _context.Polls.FindAsync(id);
+            var poll = await _context.Polls
+                .Include(p => p.Candidates)
+                .FirstOrDefaultAsync(p => p.PollId == id);
+            
             if (poll == null)
             {
                 return NotFound();
             }
-            return View(poll);
+            return View(new PollDTO(poll));
         }
 
         // POST: SimplePoll/Edit/5
@@ -201,9 +204,20 @@ namespace tinyballot.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PollId,Name,Description")] Poll poll)
+        public async Task<IActionResult> Edit(int id, PollDTO pollDTO)
         {
-            if (id != poll.PollId)
+            if (id != pollDTO.PollId)
+            {
+                return NotFound();
+            }
+
+            var poll = await _context.Polls
+                .Include(p => p.Candidates)
+                .Include(p => p.Ballots)
+                .ThenInclude(b => b.BallotCandidates)
+                .FirstOrDefaultAsync(p => p.PollId == id);
+
+            if (poll == null)
             {
                 return NotFound();
             }
@@ -212,12 +226,17 @@ namespace tinyballot.Controllers
             {
                 try
                 {
+                    poll.Name = pollDTO.Name;
+                    poll.Description = pollDTO.Description;
+                    poll.Candidates.Clear();
+                    poll.Candidates = pollDTO.Candidates;
+
                     _context.Update(poll);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PollExists(poll.PollId))
+                    if (!PollExists(id))
                     {
                         return NotFound();
                     }
@@ -228,7 +247,7 @@ namespace tinyballot.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(poll);
+            return View(pollDTO);
         }
 
         // GET: SimplePoll/Delete/5

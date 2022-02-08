@@ -4,8 +4,9 @@
 <div class="candidate">
 @using (Html.BeginCollectionItem("Candidates"))
 {
+    <input type="hidden" asp-for="CandidateId" />
     <div class="input-group">
-        <input asp-for="Label" class="form-control" placeholder="@nameof(Model.Label)"/>
+        <input asp-for="Label" class="form-control" placeholder="@nameof(Model.Label)" />
         <button class="btn btn-outline-danger" data-action="removeCandidate">
             <i class="bi bi-trash-fill"></i>
         </button>

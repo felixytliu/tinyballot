@@ -1,36 +1,62 @@
-@model TinyBallot.Models.Poll
+@model TinyBallot.Models.PollDTO
 
 @{
-    ViewData["Title"] = "Edit";
+ViewData["Title"] = "Edit";
 }
 
 <h1>Edit</h1>
 
 <h4>Poll</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="PollId" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="col-md-4">
+  <form class="row gy-2" asp-action="Edit">
+    <input type="hidden" asp-for="PollId" />
+    <div>
+      <label asp-for="Name" class="form-label"></label>
+      <input asp-for="Name" class="form-control" />
+      <span asp-validation-for="Name" class="text-danger"></span>
     </div>
+    <div>
+      <label asp-for="Description" class="form-label"></label>
+      <input asp-for="Description" class="form-control" />
+      <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div>
+      <label asp-for="Candidates" class="form-label"></label>
+      <div class="ps-2 border-start border-secondary border-4">
+        <div class="row gy-2" id="candidates">
+          @foreach (var candidate in Model.Candidates)
+          {
+          @await Html.PartialAsync("CandidateRow", candidate)
+          }
+        </div>
+        <a href="javascript:void(0);" id="addCandidate">Add Candidate</a>
+      </div>
+      <span asp-validation-for="Candidates" class="text-danger"></span>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+  </form>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+  <a asp-action="Index">Back to List</a>
 </div>
 
+@section Scripts {
+<script type="text/javascript">
+  $('#addCandidate').on('click', function () {
+  $.ajax({
+  url: '@Url.Action("AddCandidate", "SimplePoll")'
+  }).done(function (partialView) {
+  $('#candidates').append(partialView);
+  });
+  });
+
+  $('body').on('click', '*[data-action="removeCandidate"]', function (e) {
+  e.stopPropagation();
+  $(this).closest('.candidate').remove();
+  });
+</script>
+}
