@@ -1,11 +1,5 @@
 #nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TinyBallot.Data;
 using TinyBallot.Models;
@@ -69,7 +63,7 @@ namespace tinyballot.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PollId,Name,Description,Candidates")] PollDTO pollDTO)
+        public async Task<IActionResult> Create(PollDTO pollDTO)
         {
             if (ModelState.IsValid)
             {
@@ -113,7 +107,7 @@ namespace tinyballot.Controllers
         // POST: SimplePoll/Vote/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Vote(int? id, [Bind("BallotId,PollId,Candidates,Voter")] BallotDTO ballotDTO)
+        public async Task<IActionResult> Vote(int? id, BallotDTO ballotDTO)
         {
             if (id != ballotDTO.PollId)
             {
