@@ -238,14 +238,18 @@ namespace tinyballot.Controllers
             {
                 return NotFound();
             }
-
+            
             var poll = await _context.Polls
+                .Include(p => p.Candidates)
+                .Include(p => p.Ballots)
+                .AsSingleQuery()
                 .FirstOrDefaultAsync(m => m.PollId == id);
+            
             if (poll == null)
             {
                 return NotFound();
             }
-
+            
             return View(poll);
         }
 
