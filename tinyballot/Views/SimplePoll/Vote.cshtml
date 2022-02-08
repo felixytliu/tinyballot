@@ -17,32 +17,34 @@
 
 <p>@Html.DisplayFor(model => model.Poll.Description)</p>
 
-<form method="post" class="table-responsive">
-  <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-  <input type="hidden" asp-for="Poll"/>
-  <input type="hidden" asp-for="PollId"/>
-  <table class="table table-striped">
-    <tr>
-      @foreach (var c in Model.Poll.Candidates)
-      {
-      <th>@Html.DisplayFor(model => c.Label)</th>
-      }
-    </tr>
-    <tr>
-      @foreach (var c in Model.Poll.Candidates)
-      {
-      <td><input name="@nameof(Model.Candidates)" type="checkbox" value="@c.CandidateId" @(Model.Candidates.Contains(c.CandidateId)?"checked":"")/></td>
-      }
-    </tr>
-  </table>
-  <div>
-    <label asp-for="Voter" class="form-label"></label>
-    <input asp-for="Voter" class="form-control" />
-    <span asp-validation-for="Voter" class="text-danger"></span>
-  </div>
-
-  <button type="submit" class="btn btn-primary">Votar!</button>
-</form>
-
-<div>
+<div class="col-md-10">
+  <form method="post" class="row gy-2 table-responsive">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Poll"/>
+    <input type="hidden" asp-for="PollId"/>
+    <div>
+      <table class="table table-striped">
+        <tr>
+          @foreach (var c in Model.Poll.Candidates)
+          {
+          <th>@Html.DisplayFor(model => c.Label)</th>
+          }
+        </tr>
+        <tr>
+          @foreach (var c in Model.Poll.Candidates)
+          {
+          <td><input name="@nameof(Model.Candidates)" type="checkbox" value="@c.CandidateId" @(Model.Candidates.Contains(c.CandidateId)?"checked":"")/></td>
+          }
+        </tr>
+      </table>
+    </div>
+    <div class="col-md-4">
+      <label asp-for="Voter" class="form-label"></label>
+      <input asp-for="Voter" class="form-control" />
+      <span asp-validation-for="Voter" class="text-danger"></span>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary">Votar!</button>
+    </div>
+  </form>
 </div>

@@ -1,7 +1,7 @@
 @model TinyBallot.Models.PollDTO
 
 @{
-ViewData["Title"] = "Edit";
+  ViewData["Title"] = "Edit";
 }
 
 <h1>Edit</h1>
@@ -37,26 +37,25 @@ ViewData["Title"] = "Edit";
     <div>
       <button type="submit" class="btn btn-primary">Save</button>
     </div>
+    <div>
+      <a asp-action="Index">Back to List</a>
+    </div>
   </form>
-</div>
-
-<div>
-  <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
 <script type="text/javascript">
-  $('#addCandidate').on('click', function () {
+$('#addCandidate').on('click', function () {
   $.ajax({
-  url: '@Url.Action("AddCandidate", "SimplePoll")'
+    url: '@Url.Action("AddCandidate", "SimplePoll")'
   }).done(function (partialView) {
-  $('#candidates').append(partialView);
+    $('#candidates').append(partialView);
   });
-  });
+});
 
-  $('body').on('click', '*[data-action="removeCandidate"]', function (e) {
+$('body').on('click', '*[data-action="removeCandidate"]', function (e) {
   e.stopPropagation();
   $(this).closest('.candidate').remove();
-  });
+});
 </script>
 }

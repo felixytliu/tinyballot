@@ -3,7 +3,7 @@
 @using System.Linq;
 
 @{
-ViewData["Title"] = "Details";
+  ViewData["Title"] = "Details";
 }
 
 @section Styles {
@@ -36,25 +36,26 @@ ViewData["Title"] = "Details";
   <dd class = "col-sm-10">
     <div class="table-responsive">
       <table class="table table-striped">
-	<tr>
-	  <th></th>
-	  @foreach (var c in Model.Candidates)
+        <tr>
+          <th></th>
+          @foreach (var c in Model.Candidates)
           {
-	  <th>@Html.DisplayFor(model => c.Label)</th>
-	  }
-	</tr>
-	@foreach (var b in Model.Ballots)
-	{
-	<tr>
-	  <td>@Html.DisplayFor(model => b.Voter)</td>
-	  @foreach (var c in Model.Candidates)
-	  {
-	  <td><i class="bi @(b.BallotCandidates.Any(bc => (bc.Candidate == c)) ?
-			"bi-check-square-fill text-success" :
-							   "bi-x-square-fill text-danger")"></i></td>
-	  }
-	</tr>
-	}
+          <th>@Html.DisplayFor(model => c.Label)</th>
+          }
+        </tr>
+        @foreach (var b in Model.Ballots)
+        {
+        <tr>
+          <td>@Html.DisplayFor(model => b.Voter)</td>
+          @foreach (var c in Model.Candidates)
+          {
+          <td><i class="bi @(b.BallotCandidates.Any(
+            bc => (bc.Candidate == c)) ?
+            "bi-check-square-fill text-success" :
+            "bi-x-square-fill text-danger")"></i></td>
+          }
+        </tr>
+        }
       </table>
     </div>
   </dd>
