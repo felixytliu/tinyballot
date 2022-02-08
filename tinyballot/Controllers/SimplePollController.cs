@@ -207,6 +207,7 @@ namespace tinyballot.Controllers
 
             var poll = await _context.Polls
                 .Include(p => p.Candidates)
+                .ThenInclude(c => c.BallotCandidates)
                 .Include(p => p.Ballots)
                 .ThenInclude(b => b.BallotCandidates)
                 .FirstOrDefaultAsync(p => p.PollId == id);
@@ -222,8 +223,28 @@ namespace tinyballot.Controllers
                 {
                     poll.Name = pollDTO.Name;
                     poll.Description = pollDTO.Description;
-                    poll.Candidates.Clear();
-                    poll.Candidates = pollDTO.Candidates;
+
+                    // keep given candidates that were there already
+                    var newCandidates = (from c in poll.Candidates
+                                         where pollDTO.Candidates.Any(cDTO => cDTO.CandidateId == c.CandidateId)
+                                         select c
+                    ).ToList();
+                    foreach (var cDTO in pollDTO.Candidates)
+                    {
+                        var tmpC = newCandidates.FirstOrDefault(c => c.CandidateId == cDTO.CandidateId);
+                        if (tmpC == null)
+                        {
+                            // If new candidate, just add them to list
+                            newCandidates.Add(cDTO);
+                        }
+                        else
+                        {
+                            // If candidate was already there, update it
+                            tmpC.Label = cDTO.Label;
+                        }
+                    }
+                    // update poll with new candidate list
+                    poll.Candidates = newCandidates;
 
                     _context.Update(poll);
                     await _context.SaveChangesAsync();
