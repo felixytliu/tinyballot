@@ -1,9 +1,13 @@
-@model TinyBallot.Models.BallotDTO
+@model Tuple<TinyBallot.Models.PollHeaderDTO,TinyBallot.Models.BallotDTO>
 
 @using System.Linq;
 
 @{
-  ViewData["Title"] = "Voting at " + Model.Poll.Name;
+  ViewData["Title"] = "Voting at " + Model.Item1.Name;
+
+  var PollId = Model.Item2.PollId;
+  var Candidates = Model.Item2.Candidates;
+  var Voter = Model.Item2.Voter;
 }
 
 @section Styles {
@@ -12,36 +16,35 @@
 </style>
 }
 
-<h1>@Model.Poll.Name</h1>
+<h1>@Model.Item1.Name</h1>
 <hr />
 
-<p>@Html.DisplayFor(model => model.Poll.Description)</p>
+<p>@Html.DisplayFor(model => model.Item1.Description)</p>
 
 <div class="col-md-10">
   <form method="post" class="row gy-2 table-responsive">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <input type="hidden" asp-for="Poll"/>
-    <input type="hidden" asp-for="PollId"/>
+    <input type="hidden" asp-for="@PollId"/>
     <div>
       <table class="table table-striped">
         <tr>
-          @foreach (var c in Model.Poll.Candidates)
+          @foreach (var c in Model.Item1.Candidates)
           {
           <th>@Html.DisplayFor(model => c.Label)</th>
           }
         </tr>
         <tr>
-          @foreach (var c in Model.Poll.Candidates)
+          @foreach (var c in Model.Item1.Candidates)
           {
-          <td><input name="@nameof(Model.Candidates)" type="checkbox" value="@c.CandidateId" @(Model.Candidates.Contains(c.CandidateId)?"checked":"")/></td>
+          <td><input name="@nameof(Candidates)" type="checkbox" value="@c.CandidateId" checked="@Model.Item2.Candidates.Contains(c.CandidateId)" )/></td>
           }
         </tr>
       </table>
     </div>
     <div class="col-md-4">
-      <label asp-for="Voter" class="form-label"></label>
-      <input asp-for="Voter" class="form-control" />
-      <span asp-validation-for="Voter" class="text-danger"></span>
+      <label asp-for="@Voter" class="form-label"></label>
+      <input asp-for="@Voter" class="form-control" />
+      <span asp-validation-for="@Voter" class="text-danger"></span>
     </div>
     <div>
       <button type="submit" class="btn btn-primary">Votar!</button>

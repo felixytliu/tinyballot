@@ -1,4 +1,4 @@
-@model TinyBallot.Models.Poll
+@model TinyBallot.Models.PollDTO
 
 @using System.Linq;
 
@@ -49,8 +49,8 @@
           <td>@Html.DisplayFor(model => b.Voter)</td>
           @foreach (var c in Model.Candidates)
           {
-          <td><i class="bi @(b.BallotCandidates.Any(
-            bc => (bc.Candidate == c)) ?
+          <td><i class="bi @(b.Candidates.Any(
+            bc => (bc == c.CandidateId)) ?
             "bi-check-square-fill text-success" :
             "bi-x-square-fill text-danger")"></i></td>
           }

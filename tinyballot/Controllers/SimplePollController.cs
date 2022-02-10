@@ -47,23 +47,19 @@ namespace tinyballot.Controllers
                 return NotFound();
             }
 
-            return View(poll);
+            return View(new PollDTO(poll));
         }
 
         // GET: SimplePoll/Create
         public IActionResult Create()
         {
-            var pollDTO = new PollDTO();
-            
-            return View(pollDTO);
+            return View(new PollHeaderDTO());
         }
 
         // POST: SimplePoll/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(PollDTO pollDTO)
+        public async Task<IActionResult> Create(PollHeaderDTO pollDTO)
         {
             if (ModelState.IsValid)
             {
@@ -72,7 +68,12 @@ namespace tinyballot.Controllers
                     PollId = pollDTO.PollId,
                     Name = pollDTO.Name,
                     Description = pollDTO.Description,
-                    Candidates = pollDTO.Candidates
+                    Candidates = (from c in pollDTO.Candidates
+                                  select new Candidate()
+                                  {
+                                      CandidateId = c.CandidateId,
+                                      Label = c.Label
+                                  }).ToList()
                 };
                 _context.Add(poll);
                 await _context.SaveChangesAsync();
@@ -99,9 +100,10 @@ namespace tinyballot.Controllers
                 return NotFound();
             }
 
-            var ballot = new BallotDTO(poll);
-            
-            return View(ballot);
+            var header = new PollHeaderDTO(poll);
+            var ballot = new BallotDTO() { PollId = poll.PollId };
+
+            return View(new Tuple<PollHeaderDTO, BallotDTO>(header, ballot));
         }
 
         // POST: SimplePoll/Vote/5
@@ -123,7 +125,6 @@ namespace tinyballot.Controllers
             {
                 return NotFound();
             }
-
 
             if (ModelState.IsValid)
             {
@@ -165,13 +166,13 @@ namespace tinyballot.Controllers
                 .Include(p => p.Candidates)
                 .AsSingleQuery()
                 .FirstOrDefaultAsync(p => p.PollId == id);
-            ballotDTO.Poll = poll;
-            return View(ballotDTO);
+            
+            return View(new Tuple<PollHeaderDTO, BallotDTO>(new PollHeaderDTO(poll), ballotDTO));
         }
 
         public IActionResult AddCandidate()
         {
-            return PartialView("CandidateRow", new Candidate());
+            return PartialView("CandidateRow", new CandidateDTO());
         }
         
         // GET: SimplePoll/Edit/5
@@ -184,13 +185,15 @@ namespace tinyballot.Controllers
 
             var poll = await _context.Polls
                 .Include(p => p.Candidates)
+                .AsSingleQuery()
                 .FirstOrDefaultAsync(p => p.PollId == id);
             
             if (poll == null)
             {
                 return NotFound();
             }
-            return View(new PollDTO(poll));
+            
+            return View(new PollHeaderDTO(poll));
         }
 
         // POST: SimplePoll/Edit/5
@@ -198,7 +201,7 @@ namespace tinyballot.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, PollDTO pollDTO)
+        public async Task<IActionResult> Edit(int id, PollHeaderDTO pollDTO)
         {
             if (id != pollDTO.PollId)
             {
@@ -235,7 +238,7 @@ namespace tinyballot.Controllers
                         if (tmpC == null)
                         {
                             // If new candidate, just add them to list
-                            newCandidates.Add(cDTO);
+                            newCandidates.Add(new Candidate(){ Label = cDTO.Label });
                         }
                         else
                         {

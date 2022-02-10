@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using TinyBallot.Validation;
 
@@ -14,14 +13,8 @@ public class Poll
     public string Description { get; set; } = string.Empty;
 
     [NotNullOrEmptyCollection]
-    public ICollection<Candidate> Candidates { get; set; }
-    public ICollection<Ballot> Ballots { get; set; }
-
-    public Poll()
-    {
-	Candidates = new List<Candidate>();
-	Ballots = new List<Ballot>();
-    }
+    public ICollection<Candidate> Candidates { get; set; } = new List<Candidate>();
+    public ICollection<Ballot> Ballots { get; set; } = new List<Ballot>();
 }
 
 public class Ballot
@@ -33,12 +26,7 @@ public class Ballot
 
     [Required]
     public string Voter { get; set; } = string.Empty;
-    public ICollection<BallotCandidate> BallotCandidates { get; set; }
-
-    public Ballot()
-    {
-	BallotCandidates = new List<BallotCandidate>();
-    }
+    public ICollection<BallotCandidate> BallotCandidates { get; set; } = new List<BallotCandidate>();
 }
 
 public class Candidate
